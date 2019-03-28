@@ -1,0 +1,13 @@
+{
+    "name": "fahrradkrucken/yawp-router",
+    "description": "Yet another WP basic router with some syntax sugar",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "FahrradKruken\\yawpRouter\\": "src/"
+        }
+    }
+}
