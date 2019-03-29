@@ -134,7 +134,7 @@ class Router
 
     public function __dispatch()
     {
-        $this->makeRouteActionsInheritance($this->map);
+        $this->makeRouteInheritance($this->map);
         $this->createRouteMap($this->map);
 
         if (!empty($this->routeMap)) {
@@ -252,12 +252,12 @@ class Router
      */
     private function createRouteMap($group)
     {
-        if (empty($group->routes) || !($group instanceof RouteGroup)) return;
+        if (empty($group->routes) || !($group instanceof RouteGroupInterface)) return;
 
         foreach ($group->routes as $routeKey => &$route) {
-            if ($route instanceof RouteGroup) {
+            if ($route instanceof RouteGroupInterface) {
                 $this->createRouteMap($route);
-            } elseif ($route instanceof Route) {
+            } elseif ($route instanceof RouteInterface) {
                 $this->routeMap[$routeKey] = $route;
                 $this->routeMap[$routeKey]->routeInfo->url = $this->getRouteUrl($this->routeMap[$routeKey]);
                 $this->routeMap[$routeKey]->routeInfo->nonceName = '_nonce_' . $routeKey;
@@ -269,13 +269,21 @@ class Router
     }
 
     /**
-     * Applies normal inheritance of actionsBefore & actionsAfter for Routes inside RouteGroups
+     * Applies normal inheritance of actionsBefore & actionsAfter for Routes inside RouteGroups.
+     * Also applies inheritance of $routeType. Remember, routeType of children has Higher priority than parent.
      *
      * @param RouteGroup $group
      */
-    private function makeRouteActionsInheritance(&$group)
+    private function makeRouteInheritance(&$group)
     {
-        if (empty($group->routes) || !($group instanceof RouteGroup)) return;
+        if (empty($group->routeType))
+            $group->routeType = RouteInterface::ROUTE_TYPE_PUBLIC;
+
+        if (empty($group->routes) || !($group instanceof RouteGroupInterface)) return;
+
+        foreach ($group->routes as &$route)
+            if (empty($route->routeType))
+                $route->routeType = $group->routeType;
 
         if (!empty($group->actionsBefore))
             foreach ($group->routes as &$route)
@@ -285,8 +293,8 @@ class Router
                 $route->actionsAfter = array_merge($route->actionsAfter, $group->actionsAfter);
 
         foreach ($group->routes as $routeKey => &$route)
-            if ($route instanceof RouteGroup)
-                $this->makeRouteActionsInheritance($route);
+            if ($route instanceof RouteGroupInterface)
+                $this->makeRouteInheritance($route);
     }
 
     /**

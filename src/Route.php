@@ -16,7 +16,7 @@ class Route implements RouteInterface
     public $actionsBefore = [];
     public $actionsAfter = [];
 
-    public $routeType = self::ROUTE_TYPE_PUBLIC;
+    public $routeType = '';
 
     /**
      * Route constructor.

@@ -29,7 +29,7 @@ interface RouteInterface
     public function actionAfter($middleWareCallable);
 
     // --
-    // -- Set Route Type
+    // -- Set Route Type. Type of Group has lover priority than type of group routes (group children)
     // --
 
     /**

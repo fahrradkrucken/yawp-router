@@ -17,7 +17,7 @@ class RouteGroup implements RouteGroupInterface, RouteInterface
     public $actionsBefore = [];
     public $actionsAfter = [];
 
-    public $routeType = self::ROUTE_TYPE_PUBLIC;
+    public $routeType = '';
 
     /**
      * RouteGroup constructor.
