@@ -5,18 +5,17 @@ namespace FahrradKruken\YAWP\Router;
 class Router
 {
     /**
+     * @var RouteGroupInterface
+     */
+    public $map = null;
+    /**
      * @var Router|null
      */
     private static $instance = null;
     /**
-     * @var RouteGroup
-     */
-    private $rootRouteGroup = [];
-    /**
      * @var Route[]
      */
     private $routeMap = [];
-
     /**
      * @var callable[]
      */
@@ -46,7 +45,7 @@ class Router
             'ajaxRouteMapName' => 'wp_route_map',
         ]);
 
-        $this->rootRouteGroup = new RouteGroup($routerConfig['basePath']);
+        $this->map = new RouteGroup($routerConfig['basePath']);
         $this->actionCheckNonce = $routerConfig['actionCheckNonce'];
         $this->ajaxRouteMapName = $routerConfig['ajaxRouteMapName'];
     }
@@ -73,58 +72,6 @@ class Router
     public static function init($config = [])
     {
         return empty(self::$instance) ? (self::$instance = new self($config)) : self::$instance;
-    }
-
-    /**
-     * Create new Route
-     *
-     * @param string $path
-     * @param callable $action
-     *
-     * @return Route
-     */
-    public function route($path, $action)
-    {
-        return $this->rootRouteGroup->route($path, $action);
-    }
-
-    /**
-     * Create New Route Group
-     *
-     * @param string $path
-     * @param callable $groupAction
-     *
-     * @return RouteGroup
-     */
-    public function group($path, $groupAction)
-    {
-        return $this->rootRouteGroup->group($path, $groupAction);
-    }
-
-    /**
-     * Add callable before your action. This callable will accept 1 argument - Request Instance, and MUST return it
-     *
-     * @param callable $middleWareCallable
-     *
-     * @return RouteGroup
-     */
-    public function actionBefore($middleWareCallable)
-    {
-        $this->rootRouteGroup->actionBefore($middleWareCallable);
-        return $this->rootRouteGroup;
-    }
-
-    /**
-     * Add callable after your action. This callable will accept 1 argument - Response Instance, and MUST return it
-     *
-     * @param callable $middleWareCallable
-     *
-     * @return RouteGroup
-     */
-    public function actionsAfter($middleWareCallable)
-    {
-        $this->rootRouteGroup->actionAfter($middleWareCallable);
-        return $this->rootRouteGroup;
     }
 
     /**
@@ -187,8 +134,8 @@ class Router
 
     public function __dispatch()
     {
-        $this->makeRouteActionsInheritance($this->rootRouteGroup);
-        $this->createRouteMap($this->rootRouteGroup);
+        $this->makeRouteActionsInheritance($this->map);
+        $this->createRouteMap($this->map);
 
         if (!empty($this->routeMap)) {
             foreach ($this->routeMap as $routeKey => $route) {

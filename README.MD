@@ -82,13 +82,13 @@ $someResponseFormatter = function (Response $response) {
 // -- 
 // -- You can use it as singleton or as an object
 // -- 
-Router::init()->route('info-basic', $returnCurrentAction)->asPublic();
-$router->route('info-extended', $returnCurrentAction)->asPublic();
+Router::init()->map->route('info-basic', $returnCurrentAction)->asPublic();
+$router->map->route('info-extended', $returnCurrentAction)->asPublic();
 
 // -- 
 // -- You can put routes to a groups
 // -- 
-$router->group('user', function (RouteGroup $userGroup) use ($returnCurrentAction) {
+$router->map->group('user', function (RouteGroup $userGroup) use ($returnCurrentAction) {
     $userGroup->route('', $returnCurrentAction)->asPublic(); // main group action. Let's imagine it returns all users
     $userGroup->route('view', $returnCurrentAction)->asPublic(); // like admin_post_nopriv_app/user/view
     $userGroup->route('update', $returnCurrentAction)->asPrivate(); // like admin_post_app/user/view
@@ -97,7 +97,7 @@ $router->group('user', function (RouteGroup $userGroup) use ($returnCurrentActio
 // -- 
 // -- Or Even Put A group inside a Group (and make as deep routes tree as you want)
 // -- 
-$router->group('api', function (RouteGroup $apiGroup) use ($returnCurrentAction, $checkCapabilities) {
+$router->map->group('api', function (RouteGroup $apiGroup) use ($returnCurrentAction, $checkCapabilities) {
 
     $apiGroup->group('project', function (RouteGroup $userGroup) use ($returnCurrentAction) {
         $userGroup->route('view', $returnCurrentAction)->asPublicAjax();
@@ -124,7 +124,7 @@ $router->dispatch();
 Let's see a simple example, where we creating 2 routes for some very custom page with form.
 
 ```php
-Router::init()->group('some-form', function($formRouteGroup) {
+Router::init()->map->group('some-form', function($formRouteGroup) {
     // -- 
     // -- One action will display form
     // -- 

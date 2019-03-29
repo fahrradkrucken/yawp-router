@@ -6,7 +6,7 @@ namespace FahrradKruken\YAWP\Router;
  * Class RouteGroup
  * @package FahrradKruken\YAWP\Router
  */
-class RouteGroup
+class RouteGroup implements RouteGroupInterface, RouteInterface
 {
     private $basePath = '/';
 
@@ -16,6 +16,8 @@ class RouteGroup
     public $routes = [];
     public $actionsBefore = [];
     public $actionsAfter = [];
+
+    public $routeType = self::ROUTE_TYPE_PUBLIC;
 
     /**
      * RouteGroup constructor.
@@ -28,12 +30,7 @@ class RouteGroup
     }
 
     /**
-     * @see Router::route()
-     *
-     * @param $path
-     * @param $action
-     *
-     * @return Route
+     * @inheritdoc
      */
     public function route($path, $action)
     {
@@ -45,12 +42,7 @@ class RouteGroup
     }
 
     /**
-     * @see Router::group()
-     *
-     * @param $path
-     * @param $groupAction
-     *
-     * @return RouteGroup
+     * @inheritdoc
      */
     public function group($path, $groupAction)
     {
@@ -63,13 +55,7 @@ class RouteGroup
     }
 
     /**
-     * All group before-actions will be executed BEFORE the child $routes
-     *
-     * @see Router::actionBefore()
-     *
-     * @param callable $middleWareCallable
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function actionBefore($middleWareCallable)
     {
@@ -78,18 +64,44 @@ class RouteGroup
     }
 
     /**
-     * All group after-actions will be executed AFTER the child $routes
-     *
-     * @see Router::actionAfter()
-     *
-     * @param callable $middleWareCallable
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function actionAfter($middleWareCallable)
     {
         $this->actionsAfter[] = $middleWareCallable;
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function asPublic()
+    {
+        $this->routeType = self::ROUTE_TYPE_PUBLIC;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function asPrivate()
+    {
+        $this->routeType = self::ROUTE_TYPE_PRIVATE;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function asPublicAjax()
+    {
+        $this->routeType = self::ROUTE_TYPE_AJAX_PUBLIC;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function asPrivateAjax()
+    {
+        $this->routeType = self::ROUTE_TYPE_AJAX_PRIVATE;
     }
 
     private static function normalizePath($basePath, $path)

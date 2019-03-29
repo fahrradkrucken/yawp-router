@@ -6,13 +6,8 @@ namespace FahrradKruken\YAWP\Router;
  * Class Route
  * @package FahrradKruken\YAWP\Router
  */
-class Route
+class Route implements RouteInterface
 {
-    const ROUTE_TYPE_PUBLIC = 'public';
-    const ROUTE_TYPE_PRIVATE = 'private';
-    const ROUTE_TYPE_AJAX_PUBLIC = 'ajax_public';
-    const ROUTE_TYPE_AJAX_PRIVATE = 'ajax_private';
-
     public $path = '';
     public $action = null;
 
@@ -38,11 +33,7 @@ class Route
     }
 
     /**
-     * @see Router::actionBefore()
-     *
-     * @param callable $middleWareCallable
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function actionBefore($middleWareCallable)
     {
@@ -51,11 +42,7 @@ class Route
     }
 
     /**
-     * @see Router::actionAfter()
-     *
-     * @param callable $middleWareCallable
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function actionAfter($middleWareCallable)
     {
@@ -63,13 +50,8 @@ class Route
         return $this;
     }
 
-    // --
-    // -- Set Route Type
-    // --
-
     /**
-     * Equivalent of:
-     * admin_post_nopriv_{action}
+     * @inheritdoc
      */
     public function asPublic()
     {
@@ -77,9 +59,7 @@ class Route
     }
 
     /**
-     * Equivalent of:
-     * admin_post_{action}
-     * admin_post_nopriv_{action}
+     * @inheritdoc
      */
     public function asPrivate()
     {
@@ -87,8 +67,7 @@ class Route
     }
 
     /**
-     * Equivalent of:
-     * wp_ajax_nopriv_{action}
+     * @inheritdoc
      */
     public function asPublicAjax()
     {
@@ -96,9 +75,7 @@ class Route
     }
 
     /**
-     * Equivalent of:
-     * wp_ajax_{action}
-     * wp_ajax_nopriv_{action}
+     * @inheritdoc
      */
     public function asPrivateAjax()
     {
