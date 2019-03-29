@@ -100,9 +100,9 @@ $router->map->group('user', function (RouteGroup $userGroup) use ($returnCurrent
 $router->map->group('api', function (RouteGroup $apiGroup) use ($returnCurrentAction, $checkCapabilities) {
 
     $apiGroup->group('project', function (RouteGroup $userGroup) use ($returnCurrentAction) {
-        $userGroup->route('view', $returnCurrentAction)->asPublicAjax();
-        $userGroup->route('view-all', $returnCurrentAction)->asPublicAjax();
-    });
+        $userGroup->route('view', $returnCurrentAction);
+        $userGroup->route('view-all', $returnCurrentAction);
+    })->asPublicAjax(); // Route Type will be inherited
     
     $apiGroup->group('user', function (RouteGroup $userGroup) use ($returnCurrentAction) {
         $userGroup->route('view', $returnCurrentAction)->asPublicAjax(); // like wp_ajax_nopriv_app/api/user/view
