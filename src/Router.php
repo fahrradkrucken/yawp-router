@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Sebastian
- * Date: 023 23.03.2019
- * Time: 17:48
- */
 
-namespace FahrradKruken\yawpRouter;
+namespace FahrradKruken\YAWP\Router;
 
 class Router
 {
@@ -64,6 +58,8 @@ class Router
     // --
 
     /**
+     * When you run ::init() at the first time - you can set configuration of a router
+     *
      * @param array $config
      *
      * [
@@ -80,8 +76,10 @@ class Router
     }
 
     /**
-     * @param $path
-     * @param $action
+     * Create new Route
+     *
+     * @param string $path
+     * @param callable $action
      *
      * @return Route
      */
@@ -91,8 +89,10 @@ class Router
     }
 
     /**
-     * @param $path
-     * @param $groupAction
+     * Create New Route Group
+     *
+     * @param string $path
+     * @param callable $groupAction
      *
      * @return RouteGroup
      */
@@ -102,7 +102,9 @@ class Router
     }
 
     /**
-     * @param $middleWareCallable
+     * Add callable before your action. This callable will accept 1 argument - Request Instance, and MUST return it
+     *
+     * @param callable $middleWareCallable
      *
      * @return RouteGroup
      */
@@ -113,7 +115,9 @@ class Router
     }
 
     /**
-     * @param $middleWareCallable
+     * Add callable after your action. This callable will accept 1 argument - Response Instance, and MUST return it
+     *
+     * @param callable $middleWareCallable
      *
      * @return RouteGroup
      */
@@ -124,7 +128,7 @@ class Router
     }
 
     /**
-     * Start Routes Dispatching
+     * Start Routes Dispatching. In fact, dispatching will start at the "init" WP action.
      */
     public function dispatch()
     {
@@ -136,6 +140,32 @@ class Router
     // --
 
     /**
+     * You should call this method ONLY AFTER:
+     * * you used the "dispatch"
+     * * you call his method after the "init" action
+     *
+     * Actually, in most cases you will use this inside your forms. Example:
+     *
+     * ```php
+     * <?php
+     * use FahrradKruken\YAWP\Router\Router;
+     *
+     * $someRoute = Router::init()->getRouteInfo('app/some/route');
+     *
+     * ?>
+     * <form type="post" action="<?= $someRoute->url ?>">
+     *      <input type="hidden"
+     *              name="<?= $someRoute->nonceName ?>"
+     *              value="<?= $someRoute->nonce ?>"/>
+     *      <!-- --- -->
+     *      <!-- Rest of your form -->
+     *      <!-- --- -->
+     * </form>
+     *
+     * <?php
+     * ```
+     *
+     *
      * @param string $path
      *
      * @return false|RouteInfo
@@ -152,7 +182,7 @@ class Router
 
 
     // --
-    // -- Router Methods for WP
+    // -- Router Methods for WP (please don't call them directly)
     // --
 
     public function __dispatch()

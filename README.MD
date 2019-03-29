@@ -28,6 +28,8 @@ require '{path_to_router_files}/Router.php';
 
 ## Usage
 
+All public methods described in code with phpDocBlocks.
+
 #### Quick Start
 
 ```php
@@ -36,29 +38,65 @@ use FahrradKruken\yawpRouter\Response;
 use FahrradKruken\yawpRouter\RouteGroup;
 use FahrradKruken\yawpRouter\Router;
 
+// --
+// -- Configuration at the first initiation
+// --
 $router = Router::init([
-    'basePath' => 'app/', // base path for all routes
+    // base path / prefix for all routes
+    'basePath' => 'app/',
+    
+    // How to check nonce (internal nonce check - enabled by default): 
+    // - FALSE - do not check nonce, disable internal check
+    // - function($request, $response) - your own method to check nonce and do smth with that
+    'actionCheckNonce' => null, 
+    
+    // If you have some ajax Routes, JSON object with routes will be included to scripts at
+    // the top of the page. You can change the default object name
+    'ajaxRouteMapName' => 'wp_route_map',
 ]);
 
+// -- 
+// -- ACTION CALLABLE
+// -- 
 $returnCurrentAction = function (Request $request, Response $response) {
     $response->data = $request->getParam('action');
     return $response; // Actions returns response
 };
+
+// -- 
+// -- BEFOER ACTION CALLABLE
+// -- 
 $checkCapabilities = function (Request $request) {
     // some code to check user capabilities
     return $request; // before-Actions returns request
 };
+
+// -- 
+// -- AFTER ACTION CALLABLE
+// -- 
 $someResponseFormatter = function (Response $response) {
     // some code to change Response
     return $response; // after-Actions returns response
 };
 
+// -- 
+// -- You can use it as singleton or as an object
+// -- 
+Router::init()->route('info-basic', $returnCurrentAction)->asPublic();
+$router->route('info-extended', $returnCurrentAction)->asPublic();
+
+// -- 
+// -- You can put routes to a groups
+// -- 
 $router->group('user', function (RouteGroup $userGroup) use ($returnCurrentAction) {
     $userGroup->route('', $returnCurrentAction)->asPublic(); // main group action. Let's imagine it returns all users
     $userGroup->route('view', $returnCurrentAction)->asPublic(); // like admin_post_nopriv_app/user/view
     $userGroup->route('update', $returnCurrentAction)->asPrivate(); // like admin_post_app/user/view
 })->actionAfter($someResponseFormatter); // runs after each action in group
 
+// -- 
+// -- Or Even Put A group inside a Group (and make as deep routes tree as you want)
+// -- 
 $router->group('api', function (RouteGroup $apiGroup) use ($returnCurrentAction, $checkCapabilities) {
 
     $apiGroup->group('project', function (RouteGroup $userGroup) use ($returnCurrentAction) {
@@ -75,27 +113,63 @@ $router->group('api', function (RouteGroup $apiGroup) use ($returnCurrentAction,
     
 });
 
+// -- 
+// -- After all routes enabled, just run this
+// -- 
 $router->dispatch();
 ```
 
-#### Configuration
+#### What's next?
 
-#### Routes
+Let's see a simple example, where we creating 2 routes for some very custom page with form.
 
-#### Route Groups
+```php
+Router::init()->group('some-form', function($formRouteGroup) {
+    // -- 
+    // -- One action will display form
+    // -- 
+    $formRouteGroup->route('display', function($req, $res) {
+        $res->renderView('path/to/form-view.php', ['view' => 'params']);
+        return $res;
+    });
+    
+    // -- 
+    // -- Other will process form
+    // -- 
+    $formRouteGroup->route('process', function($req, $res) {
+        // do smth important
+        return $res;
+    });    
+});
+```
 
-#### Before Action Handlers
+Than, if you need a link to your form page, yo will do something like:
 
-#### After Action Handlers
+```php
+echo '<a href="' . Router::init()->getRouteInfo('/some-form/display')->urlWithNonce . '"></a>';
+```
 
-#### Request
+Than, when you creating the form:
 
-#### Response
+```php
+     
+      $someRoute = Router::init()->getRouteInfo('app/some/route');
+     
+      ?>
+      <form type="post" action="<?= $someRoute->url ?>">
+           <input type="hidden"
+                   name="<?= $someRoute->nonceName ?>"
+                   value="<?= $someRoute->nonce ?>"/>
+           <!-- --- -->
+           <!-- Rest of your form -->
+           <!-- --- -->
+      </form>
+     
+      <?php
+```
 
-#### Nonces
+#### What about Ajax Actions?
 
-#### Routes Info
-
-#### In Theme / Plugin
-
-#### Ajax Route Map
+Object with al routes, urls, nonces etc. will be displayed on the top of your HTML page 
+automatically after you'll add at least one AJAX route. Default Object name is
+"wp_route_map".

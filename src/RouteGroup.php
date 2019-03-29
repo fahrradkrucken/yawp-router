@@ -1,14 +1,11 @@
 <?php
+
+namespace FahrradKruken\YAWP\Router;
+
 /**
- * Created by PhpStorm.
- * User: Sebastian
- * Date: 024 24.03.2019
- * Time: 17:11
+ * Class RouteGroup
+ * @package FahrradKruken\YAWP\Router
  */
-
-namespace FahrradKruken\yawpRouter;
-
-
 class RouteGroup
 {
     private $basePath = '/';
@@ -20,12 +17,19 @@ class RouteGroup
     public $actionsBefore = [];
     public $actionsAfter = [];
 
+    /**
+     * RouteGroup constructor.
+     *
+     * @param string $basePath
+     */
     public function __construct($basePath = '/')
     {
         $this->basePath = $basePath;
     }
 
     /**
+     * @see Router::route()
+     *
      * @param $path
      * @param $action
      *
@@ -41,6 +45,8 @@ class RouteGroup
     }
 
     /**
+     * @see Router::group()
+     *
      * @param $path
      * @param $groupAction
      *
@@ -57,7 +63,11 @@ class RouteGroup
     }
 
     /**
-     * @param $middleWareCallable
+     * All group before-actions will be executed BEFORE the child $routes
+     *
+     * @see Router::actionBefore()
+     *
+     * @param callable $middleWareCallable
      *
      * @return $this
      */
@@ -68,7 +78,11 @@ class RouteGroup
     }
 
     /**
-     * @param $middleWareCallable
+     * All group after-actions will be executed AFTER the child $routes
+     *
+     * @see Router::actionAfter()
+     *
+     * @param callable $middleWareCallable
      *
      * @return $this
      */

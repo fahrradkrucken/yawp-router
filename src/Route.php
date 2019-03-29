@@ -1,14 +1,11 @@
 <?php
+
+namespace FahrradKruken\YAWP\Router;
+
 /**
- * Created by PhpStorm.
- * User: Sebastian
- * Date: 024 24.03.2019
- * Time: 17:11
+ * Class Route
+ * @package FahrradKruken\YAWP\Router
  */
-
-namespace FahrradKruken\yawpRouter;
-
-
 class Route
 {
     const ROUTE_TYPE_PUBLIC = 'public';
@@ -26,6 +23,12 @@ class Route
 
     public $routeType = self::ROUTE_TYPE_PUBLIC;
 
+    /**
+     * Route constructor.
+     *
+     * @param string $path
+     * @param callable|null   $action
+     */
     public function __construct($path = '', $action = null)
     {
         $this->path = $path;
@@ -35,7 +38,9 @@ class Route
     }
 
     /**
-     * @param $middleWareCallable
+     * @see Router::actionBefore()
+     *
+     * @param callable $middleWareCallable
      *
      * @return $this
      */
@@ -46,7 +51,9 @@ class Route
     }
 
     /**
-     * @param $middleWareCallable
+     * @see Router::actionAfter()
+     *
+     * @param callable $middleWareCallable
      *
      * @return $this
      */
@@ -60,21 +67,39 @@ class Route
     // -- Set Route Type
     // --
 
+    /**
+     * Equivalent of:
+     * admin_post_nopriv_{action}
+     */
     public function asPublic()
     {
         $this->routeType = self::ROUTE_TYPE_PUBLIC;
     }
 
+    /**
+     * Equivalent of:
+     * admin_post_{action}
+     * admin_post_nopriv_{action}
+     */
     public function asPrivate()
     {
         $this->routeType = self::ROUTE_TYPE_PRIVATE;
     }
 
+    /**
+     * Equivalent of:
+     * wp_ajax_nopriv_{action}
+     */
     public function asPublicAjax()
     {
         $this->routeType = self::ROUTE_TYPE_AJAX_PUBLIC;
     }
 
+    /**
+     * Equivalent of:
+     * wp_ajax_{action}
+     * wp_ajax_nopriv_{action}
+     */
     public function asPrivateAjax()
     {
         $this->routeType = self::ROUTE_TYPE_AJAX_PRIVATE;
