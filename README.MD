@@ -153,7 +153,7 @@ Than, when you creating the form:
 
 ```php
      
-      $someRoute = Router::init()->getRouteInfo('app/some/route');
+      $someRoute = Router::init()->getRouteInfo('/some-form/process');
      
       ?>
       <form type="post" action="<?= $someRoute->url ?>">
