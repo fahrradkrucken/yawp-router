@@ -16,15 +16,7 @@ class Request
     public function __construct($currentRoute)
     {
         $this->currentRoute = $currentRoute;
-
-        $input = [];
-        if (wp_is_json_request()) {
-            $input = json_decode(file_get_contents('php://input'), true);
-            if (json_last_error() !== JSON_ERROR_NONE)
-                $input = [];
-        } else {
-            $input = $_REQUEST;
-        }
+        $input = $_REQUEST;
 
         if (!empty($input)) {
             foreach ($input as $paramName => $paramValue) {
@@ -62,7 +54,7 @@ class Request
      * Add / Update Request parameter - useful for validation or some other features that you can do BEFORE your action.
      *
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return mixed
      */
